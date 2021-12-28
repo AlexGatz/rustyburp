@@ -3,8 +3,12 @@
  This binary uses Hyper to act as a proxy server.
  The proxy server will intercept reqeusts from a client and export them to an editor. 
  Once editing is complete, the request will can either be forwarded or dropped.
+
+ https://github.com/AlexGatz/rustyburp/blob/master/src/main.rs
 */
 
+// Example: http --> https upgrade proxy.
+// https://github.com/hyperium/hyper/blob/master/examples/http_proxy.rs
 #![deny(warnings)]
 
 use std::convert::Infallible;
