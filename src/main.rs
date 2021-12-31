@@ -7,6 +7,7 @@
 // TODO: Write response from server to file
 // TODO: Add support for SSL
 // TODO: Add support for editor integration
+// TODO: Proper error handling instead of unwrap()
 
 // To test:
 // 1.) start "nc -lvnp 8080"
