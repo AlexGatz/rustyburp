@@ -9,9 +9,12 @@
 
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
-use std::path::Path;
+use std::io::{BufWriter, Read};
+use std::fs::write;
+use std::str;
 
 fn main() {
+
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
 
     for stream in listener.incoming() {
@@ -27,6 +30,17 @@ fn handle_connection(mut stream: TcpStream) {
     stream.read(&mut buffer).unwrap();
 
     println!("{}", String::from_utf8_lossy(&buffer[..]));
+
+    // Efficently uses the BufWRite to write data to file.
+    //let f = File::create("/home/neo/test.txt").expect("Unable to create file");
+    //let mut f = BufWriter::new(f);
+    //f.write_all(&buffer).expect("Unable to write data");
+
+    // Converts &buffer to utf8 slice, but still shows a bunch of binary data. Many "^@" are written to the file.
+    let buffer_str = str::from_utf8(&buffer).unwrap();
+
+    // trim_matches removed the null characters from the end of the string.
+    write("/home/neo/test.txt", buffer_str.trim_matches(char::from(0))).expect("Unable to write file");
 
     let response = "HTTP/1.1 200 OK\r\n\r\n";
 
