@@ -26,24 +26,22 @@ fn main() {
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
     let mut input = String::new();
 
-    // REFACTOR: This is a bit of a mess. It needs to become a while loop.
-    for stream in listener.incoming() {
-        let stream = stream.unwrap();
+    // The refactor works initially, but I need to figure out how to get the loop to work.
+    loop {
+        let stream = listener.incoming().next().unwrap().unwrap();
 
         println!("entering handle_client_request");
         handle_client_request(stream);
-        loop {
-            std::io::stdin().read_line(&mut input).unwrap();
-            println!("Please type 'forward' or 'exit'.");
+        std::io::stdin().read_line(&mut input).unwrap();
+        println!("Please type 'forward' or 'exit'.");
 
-            if input.trim() == "forward" {
-                handle_server_request();
-                continue;
-            } else if input.trim() == "exit" {
-                break;
-            } else {
-                println!("Invalid input");
-            }
+        if input.trim() == "forward" {
+            handle_server_request();
+            continue;
+        } else if input.trim() == "exit" {
+            break;
+        } else {
+            println!("Invalid input");
         }
     }
 }
