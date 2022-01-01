@@ -15,7 +15,7 @@
 // To test:
 // 1.) start "nc -lvnp 8080"
 // 2.) cargo run
-// 3.) execute "curl -iv http://localhost:7878 -d '{"stuff":10, "otherstuff":50}'
+// 3.) execute: curl -iv http://localhost:7878 -d '{"stuff":10, "otherstuff":50}'
 // 4.) You can then edit request.txt and choose to forward to nc on port 8080. 
 
 use std::fs::write;
