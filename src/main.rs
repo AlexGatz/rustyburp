@@ -26,7 +26,7 @@ fn main() {
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
     let mut input = String::new();
 
-    // The refactor works initially, but I need to figure out how to get the loop to work.
+    // The refactor works initially, but I need to figure out how to get the loop to work with handle_client_requent.
     loop {
         let stream = listener.incoming().next().unwrap().unwrap();
 
