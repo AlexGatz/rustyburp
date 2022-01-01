@@ -28,7 +28,7 @@ fn main() {
 
     println!("Waiting for inital connection/request from client...");
 
-    // Is talling incomming().next() needed here?
+    // Is calling incomming().next() needed here?
     let stream = listener.incoming().next().unwrap().unwrap();
     handle_client_request(stream);
 
