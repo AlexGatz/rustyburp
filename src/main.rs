@@ -3,6 +3,8 @@
  https://github.com/AlexGatz/rustyburp/blob/master/src/main.rs
 */
 
+// Current problem: After learning the basics of rust, this needs to be redesigned to be more modular and flexible.
+
 // TODO: Send request to intented server (host/uri from request). In other words, make this an actual proxy.
 // TODO: Write response from server to file
 
