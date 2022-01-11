@@ -1,5 +1,5 @@
 /*
- Rustyburp is a Burp Suite like proxy written in Rust standard libs.
+ Rustyburp is a Burp Suite like proxy written in Rust.
  https://github.com/AlexGatz/rustyburp/blob/master/src/main.rs
 */
 
