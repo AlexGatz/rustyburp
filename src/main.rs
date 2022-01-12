@@ -10,49 +10,49 @@ Learning exercise by: Alex Gatz
 
 === Design ===
 
-Possible states:
-    1. Proxy on ---> Display req editor and res viewer, can forward.
-    2. Proxy off ---> Do nothing, can't forward, hide req editor and res viewer.
+Possible internal app states:
+    1. Connection established.
+    2. Connection failed, retry.
+    3. Disconnect
+        If connection established:
+        1. Proxy on ---> Display req editor and res viewer, can forward.
+        2. Proxy off ---> Do nothing, can't forward, hide req editor and res viewer.
+            If proxy on:
+            1. Drop ---> Drop request. Can't forward.
+            2. Forward ---> Forward request to server.
+            3. Display request editor
+            4. Display response viewer
+            If proxy off:
+            1. Hide request editor
+            2. Hide response viewer
+        If disconnect: 
+        1. Close connection
 
-    Sub states if proxy: true :
-        1. Drop ---> Drop request. Can't forward.
-        2. Forward ---> Forward request to server.
+Paths and API calls:
 
-Possible application flow:
+    GET / --> App starts with 2 fields and a button: 
+        1. IP Field (default localhost)
+        2. PORT Field (default 8080)
+        3. Connect button
 
-    App starts with 2 fields:
-        1. IP
-        2. PORT
+        Api: /connect POST: {IP: ip, PORT: port}
 
-    These values are sent 
+    GET /editor Editor page:
+        1. Proxy on/off toggle
+        2. Forward button
+        3. Drop button
+        4. Request Editor
+        5. Server Response Viewer
 
-
-
-Three main parts:
-1. Server recieivng browser requests.
-    a. HTTP/HTTPS listener
-    b. HTTP/HTTPS request parser
-    c. HTTP/HTTPS response builder
-    d. Perhaps a response data type?
-    Does tokio/hyper handle this already?
-
-    Essentially something is needed to handle the tcp stream, parse a request and return a datatype or String upon API call. 
-
-    /connect API ---> ip and port to establish tcpstream
-    /
-
-    
-2. A front end written in React js maybe?
-    a. Text based request editor with.
-    b. A response viewer.
-    c. /editor api path
-3. Client sending the modified requests.
-    a. 
+        Api: /editor POST:  request {PROXY: boolean, FORWARD: boolean, DROP: boolean, REQUEST: String}
+                            response {SERVER_RESPONSE: String}
+ 
 
 */
 
-
-
+// This application is currently an MVP that only writes to a file and handles basic CLI input.
+// It will also forward data from a file that can be edited to a listener on another port.
+// *** See above for the new design and plan ***
 
 // Current problem: After learning the basics of rust, this needs to be redesigned to be more modular and flexible.
 
