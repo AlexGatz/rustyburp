@@ -5,7 +5,7 @@
 
 // Current problem: After learning the basics of rust, this needs to be redesigned to be more modular and flexible.
 
-// TODO: Send request to intented server (host/uri from request). In other words, make this an actual proxy.
+// TODO: Send request to intended server (host/uri from request). In other words, make this an actual proxy.
 // TODO: Write response from server to file
 
 // TODO: Add support for SSL
@@ -27,29 +27,29 @@ use std::str;
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:7878").unwrap();
 
-    println!("Waiting for inital connection/request from client...");
+    dbg!("Waiting for initial connection/request from client...");
 
-    // Is calling incomming().next() needed here?
+    // Is calling incoming().next() needed here?
     let stream = listener.incoming().next().unwrap().unwrap();
     handle_client_request(stream);
 
     loop {
         let mut input = String::new();
-        println!("Please type 'forward' or 'exit'.");
+        dbg!("Please type 'forward' or 'exit'.");
         std::io::stdin().read_line(&mut input).unwrap();
 
         if input.trim() == "forward" {
             handle_server_request();
-            println!("\nRequest forwarded. Waiting for next request.\n");
+            dbg!("\nRequest forwarded. Waiting for next request.\n");
             let stream = listener.incoming().next().unwrap().unwrap();
             handle_client_request(stream);
             continue;
 
-        // TODO: Add drop request functionationality.
+        // TODO: Add drop request functionality.
         } else if input.trim() == "exit" {
             break;
         } else {
-            println!("Invalid input");
+            dbg!("Invalid input");
             continue;
         }
     }
@@ -58,7 +58,7 @@ fn main() {
 fn handle_client_request(mut stream: TcpStream) {
     let mut buffer = [0; 1024];
 
-    stream.read(&mut buffer).unwrap();
+    stream.read(&mut buffer).unwrap_or_default();
     let buffer_str = str::from_utf8(&buffer).unwrap();
 
     println!("{}", buffer_str);
@@ -69,7 +69,7 @@ fn handle_client_request(mut stream: TcpStream) {
         buffer_str.trim_matches(char::from(0)),
     )
     .expect("Unable to write file");
-    println!("\nRequest written to request.txt\n");
+    dbg!("\nRequest written to request.txt\n");
 }
 
 // REFACTOR: This is just a placeholder for now. The stream dies after the first request. The driver loop should maintain the server_stream in main().
