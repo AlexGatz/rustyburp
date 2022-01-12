@@ -1,7 +1,58 @@
 /*
+Learning exercise by: Alex Gatz
+
  Rustyburp is a Burp Suite like proxy written in Rust.
+
  https://github.com/AlexGatz/rustyburp/blob/master/src/main.rs
 */
+
+/* 
+
+=== Design ===
+
+Possible states:
+    1. Proxy on ---> Display req editor and res viewer, can forward.
+    2. Proxy off ---> Do nothing, can't forward, hide req editor and res viewer.
+
+    Sub states if proxy: true :
+        1. Drop ---> Drop request. Can't forward.
+        2. Forward ---> Forward request to server.
+
+Possible application flow:
+
+    App starts with 2 fields:
+        1. IP
+        2. PORT
+
+    These values are sent 
+
+
+
+Three main parts:
+1. Server recieivng browser requests.
+    a. HTTP/HTTPS listener
+    b. HTTP/HTTPS request parser
+    c. HTTP/HTTPS response builder
+    d. Perhaps a response data type?
+    Does tokio/hyper handle this already?
+
+    Essentially something is needed to handle the tcp stream, parse a request and return a datatype or String upon API call. 
+
+    /connect API ---> ip and port to establish tcpstream
+    /
+
+    
+2. A front end written in React js maybe?
+    a. Text based request editor with.
+    b. A response viewer.
+    c. /editor api path
+3. Client sending the modified requests.
+    a. 
+
+*/
+
+
+
 
 // Current problem: After learning the basics of rust, this needs to be redesigned to be more modular and flexible.
 
