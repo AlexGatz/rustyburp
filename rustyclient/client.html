@@ -5,13 +5,14 @@
     <style>
         .Button-Row {
             display: grid;
-            gap: 10px;
-            grid-template-columns: 0.3fr;
+            grid-template-columns: repeat(3, 0.1fr);
+            padding: 5px;
         }
+
         .container {
             display: grid;
             grid-template-columns: 1.5fr 1.4fr;
-            grid-template-rows: 0.2fr 1.8fr;
+            grid-template-rows: 0.2fr 90vh;
             gap: 10px 10px;
             grid-auto-flow: row;
             grid-template-areas:
@@ -21,10 +22,18 @@
 
         .Request-Editor {
             grid-area: Request-Editor;
+            border: 1px solid #ccc;
+            border-radius: 16px;
+            color: #000;
+            padding: 5px;
         }
 
         .Response-Editor {
             grid-area: Response-Editor;
+            border: 1px solid #ccc;
+            border-radius: 16px;
+            color: #000;
+            padding: 5px;
         }
 
         /* The switch - the box around the slider */
@@ -95,12 +104,16 @@
 <body>
 
     <div class="container">
-        <div class="Button-Row">Proxy on/off:
-            <!-- Rounded switch -->
-            <label class="switch">
-                <input type="checkbox">
-                <span class="slider round"></span>
-            </label><button>Forward</button><button>Drop</button>
+        <div class="Button-Row">
+            <div>
+                <!-- Rounded switch -->
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div><button>Forward</button></div>
+            <div><button>Drop</button></div>
         </div>
         <div class="Request-Editor" contenteditable="true">Loading...</div>
         <div class="Response-Editor">Loading...</div>
