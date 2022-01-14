@@ -12,7 +12,8 @@
 
       let data = { ip: IP, port: PORT };
 
-      fetch('http://127.0.0.1:8080', { mode: 'no-cors', method: 'POST', body: JSON.stringify(data) }).then(message => document.getElementById('response').innerHTML = message).then(log => console.log(log));
+      // May need to adjust the message display portion once wired to actual backend. 
+      fetch('http://127.0.0.1:8080', { mode: 'no-cors', method: 'POST', body: JSON.stringify(data) }).then(message => document.getElementById('response').innerHTML = JSON.stringify(message)).then(log => console.log(log));
     }
   </script>
 </head>
