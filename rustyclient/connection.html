@@ -12,10 +12,7 @@
 
       let data = { ip: IP, port: PORT };
 
-      const response = fetch('http://127.0.0.1:8080', { method: 'POST', mode: 'cors', cache: 'no-cache', credentials: 'same-origin', /*headers: { 'Content-Type': 'application/json' },*/ body: JSON.stringify(data) });
-
-      // Using netcat this will just show pending until an actual response is recieved. 
-      console.log(response);
+      fetch('http://127.0.0.1:8080', { mode: 'no-cors', method: 'POST', body: JSON.stringify(data) }).then(message => document.getElementById('response').innerHTML = message).then(log => console.log(log));
     }
   </script>
 </head>
@@ -31,6 +28,8 @@
     <input type="text" id="port" name="port" value="8080"><br><br>
     <input type="button" onclick="startProxy()" value="Start Proxy">
   </form>
+
+  <p id="response"></p>
 
 </body>
 
