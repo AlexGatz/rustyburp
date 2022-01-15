@@ -12,7 +12,7 @@ https://github.com/AlexGatz/rustyburp/blob/master/src/main.rs
 
 Possible internal app states:
     1. Connection established.
-    2. Connection failed, retry.
+    2. Connection failed, retry?
     3. Disconnect
         If connection established:
         1. Proxy on ---> Display req editor and res viewer, can forward.
