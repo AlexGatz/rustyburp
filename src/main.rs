@@ -25,12 +25,12 @@ Possible internal app states:
             If proxy off:
             1. Hide request editor
             2. Hide response viewer
-        If disconnect: 
+        If disconnect:
         1. Close connection
 
 Paths and API calls:
 
-    GET / --> App starts with 2 fields and a button: 
+    GET / --> App starts with 2 fields and a button:
         1. IP Field (default localhost)
         2. PORT Field (default 8080)
         3. Connect button
@@ -46,7 +46,49 @@ Paths and API calls:
 
         Api: /editor POST:  request {PROXY: boolean, ACTION: FORWARD|DROP, boolean, CLIENT_REQUEST: String}
                             response {SERVER_RESPONSE: String}
- 
+
 
 */
-fn main () {println!("New Design!!!");}
+enum Action {
+    Forward,
+    Drop,
+    Passthrough,
+}
+struct Proxy {
+    ip: String,
+    port: u16,
+    client_req: String,
+    client_res: String,
+    action: Action,
+}
+
+impl Proxy {
+    fn new() {
+        dbg!("Proxy::new called.");
+    }
+    fn action(a: Action){        
+        let b = match a {
+            Action::Forward => "Forward Action",
+            Action::Drop => "Drop Action",
+            Action::Passthrough => "Passthrough Action",
+        };
+
+        dbg!(b);
+    }
+}
+
+struct Controller {
+    ip: String,
+    port: u16,
+    controller_req: String,
+    controller_res: String,
+}
+
+impl Controller {
+    // TODO:
+}
+fn main() {
+    let proxy = Proxy::new();
+    let action = Action::Forward;
+    Proxy::action(action);
+}
