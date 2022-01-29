@@ -44,7 +44,7 @@ Paths and API calls:
         4. Request Editor
         5. Server Response Viewer
 
-        Api: /editor POST:  request {PROXY: boolean, FORWARD: boolean, DROP: boolean, REQUEST: String}
+        Api: /editor POST:  request {PROXY: boolean, ACTION: FORWARD|DROP, boolean, CLIENT_REQUEST: String}
                             response {SERVER_RESPONSE: String}
  
 
