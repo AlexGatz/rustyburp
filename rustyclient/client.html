@@ -2,21 +2,76 @@
 <html>
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <script type="text/javascript">
-        function forward ();
-        function drop ();
-        function proxy ();
+        const wsUrl = 'ws://localhost:8888';
+        const ws = new WebSocket(wsUrl);
+
+        ws.onopen = function (event) {
+            console.log('WebSocket connection established');
+        };
+
+        ws.onerror = function (event) {
+            console.error('WebSocket error observed:', event);
+        };
+
+        // This part assumes interaction with the DOM, so it's kept inside the DOMContentLoaded callback
+        document.addEventListener('DOMContentLoaded', function () {
+            ws.onmessage = function (event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    switch (data.type) {
+                        case 'request':
+                            document.querySelector('.Request-Editor').textContent = data.content;
+                            break;
+                        case 'response':
+                            document.querySelector('.Response-Editor').textContent = data.content;
+                            break;
+                        default:
+                            console.log('Unknown data type received:', data);
+                    }
+                } catch (error) {
+                    console.error('Error processing message:', error);
+                }
+            };
+        });
+
+        ws.onclose = function (event) {
+            console.log('WebSocket connection closed:', event);
+        };
+
+        function forward() {
+            const editorContent = document.querySelector('.Request-Editor').textContent;
+            const dataToSend = JSON.stringify({ content: editorContent });
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.send(dataToSend);
+                console.log('Content sent:', editorContent);
+            } else {
+                console.error('WebSocket is not open. Content not sent.');
+            }
+        };
+
+        function drop() {
+            alert("Drop pressed.")
+        };
+
+        function proxy() { };
     </script>
 
     <style>
+        body {
+            background-color: #202020;
+            color: #E0E0E0;
+        }
+
         .Button-Row {
             display: grid;
             grid-template-columns: repeat(3, 0fr);
             grid-template-rows: 0.5fr;
             padding: 5px;
             gap: 10px;
+            color: #828282;
         }
 
         .container {
@@ -34,7 +89,7 @@
             grid-area: Request-Editor;
             border: 1px solid #ccc;
             border-radius: 16px;
-            color: #000;
+            color: #ffffff;
             padding: 5px;
         }
 
@@ -42,7 +97,7 @@
             grid-area: Response-Editor;
             border: 1px solid #ccc;
             border-radius: 16px;
-            color: #000;
+            color: #fffefe;
             padding: 5px;
         }
 
@@ -69,7 +124,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc;
+            background-color: #353535;
             -webkit-transition: .4s;
             transition: .4s;
         }
@@ -81,7 +136,7 @@
             width: 26px;
             left: 4px;
             bottom: 4px;
-            background-color: white;
+            background-color: rgb(132, 132, 132);
             -webkit-transition: .4s;
             transition: .4s;
         }
@@ -105,8 +160,40 @@
             border-radius: 34px;
         }
 
+        .slider.round:hover {
+            background-color: #9e9e9e;
+        }
+
         .slider.round:before {
             border-radius: 50%;
+        }
+
+        .Forward-Button {
+            background-color: #353535;
+            color: #E1E0E0;
+            border: none;
+            border-radius: 21px;
+            padding: 7px 20px;
+            font-size: 17px;
+            transition: background-color 0.3s;
+        }
+
+        .Forward-Button:hover {
+            background-color: #9e9e9e;
+        }
+
+        .Drop-Button {
+            background-color: #353535;
+            color: #E1E0E0;
+            border: none;
+            border-radius: 21px;
+            padding: 7px 20px;
+            font-size: 17px;
+            transition: background-color 0.3s;
+        }
+
+        .Drop-Button:hover {
+            background-color: #9e9e9e;
         }
     </style>
 </head>
@@ -116,17 +203,16 @@
     <div class="container">
         <div class="Button-Row">
             <div>
-                <!-- Rounded switch -->
                 <label class="switch">
                     <input type="checkbox">
                     <span class="slider round"></span>
                 </label>
             </div>
-            <div><button>Forward</button></div>
-            <div><button>Drop</button></div>
+            <div><button class="Forward-Button" onclick="forward();">Forward</button></div>
+            <div><button class="Drop-Button" onclick="drop();">Drop</button></div>
         </div>
-        <div class="Request-Editor" contenteditable="true">Loading...</div>
-        <div class="Response-Editor">Loading...</div>
+        <div class="Request-Editor" contenteditable="true">Listening for Request...</div>
+        <div class="Response-Editor">Listening for Response...</div>
     </div>
 
 </body>

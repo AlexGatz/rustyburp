@@ -2,36 +2,94 @@
 <html>
 
 <head>
-
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
   <script type="text/javascript">
     function startProxy() {
       let IP = document.getElementById("ip").value;
       let PORT = document.getElementById("port").value;
-
       let data = { ip: IP, port: PORT };
 
-      // May need to adjust the message display portion once wired to actual backend. 
-      fetch('http://127.0.0.1:8080', { mode: 'no-cors', method: 'POST', body: JSON.stringify(data) }).then(message => {document.getElementById('response').innerHTML = JSON.stringify(message)}, error => {console.error(error)});
+      fetch('http://127.0.0.1:8080/listen', {
+        mode: 'no-cors', 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', 
+        },
+        body: JSON.stringify(data) 
+      })
+        .then(() => {
+          localStorage.setItem('proxyIP', IP);
+          localStorage.setItem('proxyPort', PORT);
+          window.location.href = 'client.html'; 
+        })
+        .catch(error => {
+          console.error('Error sending proxy details:', error);
+          document.getElementById('response').textContent = `Error sending proxy details: ${error}`;
+        });
     }
+
   </script>
+  <style>
+    body {
+      background-color: #202020;
+      color: #E0E0E0;
+    }
+
+    .Start-Proxy:hover {
+      background-color: #9e9e9e;
+    }
+
+    .Start-Proxy {
+      background-color: #353535;
+      color: #E1E0E0;
+      border: none;
+      border-radius: 21px;
+      padding: 7px 20px;
+      font-size: 17px;
+      transition: background-color 0.3s;
+    }
+
+    input[type="text"] {
+      background-color: #333;
+      color: #fff;
+      border: 2px solid #555;
+      border-radius: 5px;
+      padding: 5px;
+      margin-bottom: 10px;
+    }
+
+    .input-group label {
+      margin-right: 10px;
+      /* Space between label and input */
+      width: 30px;
+      /* Ensure this is enough for the longest label */
+      display: inline-block;
+      /* This ensures the width is applied */
+      text-align: left;
+      /* Optional: Aligns the text to the right for a tidy look */
+    }
+  </style>
 </head>
 
 <body>
-
-  <h2>Rusty Burp - A BurpSuite proxy written in rust!</h2>
-
+  <h2>RustyBurp: An HTTP/3 mitm proxy written in rust!</h2>
+  <h4>Listener IP and Port:</h4>
+  <p>Your client traffic will be routed through this IP:PORT. </p>
   <form action="">
-    <label for="fname">Proxy IP:</label><br>
-    <input type="text" id="ip" name="ip" value="127.0.0.1"><br>
-    <label for="lname">Proxy Port:</label><br>
-    <input type="text" id="port" name="port" value="8080"><br><br>
-    <input type="button" onclick="startProxy()" value="Start Proxy">
+    <form action="">
+      <div class="input-group">
+        <label for="ip">IP:</label>
+        <input type="text" id="ip" name="ip" value="127.0.0.1">
+      </div>
+      <div class="input-group">
+        <label for="port">Port:</label>
+        <input type="text" id="port" name="port" value="8080">
+      </div>
+      <input class="Start-Proxy" type="button" onclick="startProxy()" value="Start Proxy">
+    </form>
+
   </form>
-
   <p id="response"></p>
-
 </body>
 
 </html>
