@@ -5,8 +5,9 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <script type="text/javascript">
-        const wsUrl = 'ws://localhost:8888';
+        const wsUrl = 'ws://localhost:8888/';
         const ws = new WebSocket(wsUrl);
+        let isBypassEnabled = true;
 
         ws.onopen = function (event) {
             console.log('WebSocket connection established');
@@ -16,7 +17,6 @@
             console.error('WebSocket error observed:', event);
         };
 
-        // This part assumes interaction with the DOM, so it's kept inside the DOMContentLoaded callback
         document.addEventListener('DOMContentLoaded', function () {
             ws.onmessage = function (event) {
                 try {
@@ -35,28 +35,42 @@
                     console.error('Error processing message:', error);
                 }
             };
-        });
+
+            // Start listener after the DOM Content is Loaded.
+            document.getElementById("toggleProxy").addEventListener('change', captureSwitchState);
+        })
 
         ws.onclose = function (event) {
             console.log('WebSocket connection closed:', event);
-        };
+        }
 
-        function forward() {
-            const editorContent = document.querySelector('.Request-Editor').textContent;
-            const dataToSend = JSON.stringify({ content: editorContent });
-            if (ws.readyState === WebSocket.OPEN) {
-                ws.send(dataToSend);
-                console.log('Content sent:', editorContent);
+        function wsSendProxied(action, request) {
+            // Check if bypass is enabled before sending any message
+            if (!isBypassEnabled && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ Controller: { state: "Capture", action, request } }));
+            } else if (isBypassEnabled) {
+                console.log('Bypass is enabled. Message not sent.');
             } else {
                 console.error('WebSocket is not open. Content not sent.');
             }
-        };
+        }
+
+        function forward() {
+            const requestEditorData = document.querySelector('.Request-Editor').textContent;
+            wsSendProxied("Forward", requestEditorData);
+        }
 
         function drop() {
-            alert("Drop pressed.")
-        };
+            wsSendProxied("Drop", null);
+        }
 
-        function proxy() { };
+        function captureSwitchState() {
+            var switchState = document.getElementById("toggleProxy").checked ? "Capture" : "Bypass";
+            // Update the global bypass state based on the switch
+            isBypassEnabled = (switchState === "Bypass");
+            ws.send(JSON.stringify({ Controller: { state: switchState } }));
+        }
+
     </script>
 
     <style>
@@ -204,7 +218,7 @@
         <div class="Button-Row">
             <div>
                 <label class="switch">
-                    <input type="checkbox">
+                    <input type="checkbox" id="toggleProxy">
                     <span class="slider round"></span>
                 </label>
             </div>
