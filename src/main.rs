@@ -44,51 +44,86 @@ Paths and API calls:
         4. Request Editor
         5. Server Response Viewer
 
-        Api: /editor POST:  request {PROXY: boolean, ACTION: FORWARD|DROP, boolean, CLIENT_REQUEST: String}
+        Api: /editor POST:  request {PROXY: boolean, ACTION: FORWARD|DROP, CLIENT_REQUEST: String}
                             response {SERVER_RESPONSE: String}
 
 
 */
+use axum::{
+    extract::ws::{Message, WebSocket, WebSocketUpgrade},
+    response::IntoResponse,
+    routing::get,
+    Router,
+};
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Deserialize)]
 enum Action {
     Forward,
     Drop,
-    Passthrough,
 }
-struct Proxy {
-    ip: String,
-    port: u16,
-    client_req: String,
-    client_res: String,
+
+#[derive(Debug, Deserialize)]
+enum State {
+    Capture,
+    Bypass,
+}
+
+#[derive(Debug, Deserialize)]
+enum RustyMessage {
+    ProxyConnection {
+        ip: String,
+        port: String,
+    },
+    Controller {
+        state: State,
+        action: Option<Action>,
+        request: Option<String>,
+    },
+}
+
+struct ProxyData {
+    request: String,
+    response: String,
     action: Action,
+    state: State,
 }
 
-impl Proxy {
-    fn new() {
-        dbg!("Proxy::new called.");
-    }
-    fn action(a: Action){        
-        let b = match a {
-            Action::Forward => "Forward Action",
-            Action::Drop => "Drop Action",
-            Action::Passthrough => "Passthrough Action",
-        };
+async fn websocket_handler(ws: WebSocketUpgrade) -> impl IntoResponse {
+    ws.on_upgrade(handle_socket)
+}
 
-        dbg!(b);
+async fn handle_socket(mut socket: WebSocket) {
+    while let Some(Ok(msg)) = socket.recv().await {
+        if let Message::Text(text) = msg {
+            handle_message(text).await
+        }
     }
 }
 
-struct Controller {
-    ip: String,
-    port: u16,
-    controller_req: String,
-    controller_res: String,
+async fn handle_message(text: String) {
+    match serde_json::from_str::<RustyMessage>(&text) {
+        Ok(RustyMessage::ProxyConnection { ip, port }) => {
+            println!("State changed to: {ip:?}:{port:?}");
+        }
+        Ok(RustyMessage::Controller { state, action, request }) => {
+            println!("State changed to: {state:?} {action:?} {request:?}");
+        }
+        Err(e) => {
+            println!("Failed to parse message: {}", e);
+        }
+    }
 }
 
-impl Controller {
-    // TODO:
-}
-fn main() {
-    let proxy = Proxy::new();
-    let action = Action::Forward;
-    Proxy::action(action);
+#[tokio::main(flavor = "multi_thread")]
+async fn main() {
+    let app = Router::new().route("/", get(websocket_handler));
+
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:8888")
+        .await
+        .unwrap();
+
+    axum::serve(listener, app.into_make_service())
+        .await
+        .unwrap();
 }

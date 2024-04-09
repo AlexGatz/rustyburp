@@ -4,28 +4,18 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <script type="text/javascript">
-    function startProxy() {
-      let IP = document.getElementById("ip").value;
-      let PORT = document.getElementById("port").value;
-      let data = { ip: IP, port: PORT };
 
-      fetch('http://127.0.0.1:8080/listen', {
-        mode: 'no-cors', 
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json', 
-        },
-        body: JSON.stringify(data) 
-      })
-        .then(() => {
-          localStorage.setItem('proxyIP', IP);
-          localStorage.setItem('proxyPort', PORT);
-          window.location.href = 'client.html'; 
-        })
-        .catch(error => {
-          console.error('Error sending proxy details:', error);
-          document.getElementById('response').textContent = `Error sending proxy details: ${error}`;
-        });
+    const wsUrl = 'ws://127.0.0.1:8888/';
+    const ws = new WebSocket(wsUrl);
+    ws.onopen = function (event) {
+      console.log('WebSocket connection established');
+    };
+    function startProxy() {
+      const IP = document.getElementById("ip").value;
+      const PORT = document.getElementById("port").value;
+      const data = {ProxyConnection:{ ip: IP, port: PORT }};
+      ws.send(JSON.stringify(data));
+      window.location.href = 'controller.html';
     }
 
   </script>
